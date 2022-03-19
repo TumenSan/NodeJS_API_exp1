@@ -1,49 +1,3 @@
-/*
-async function CreateUser(userName, userAge) {
-
-    const response = await fetch("signup", {
-        method: "POST",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-            name: userName,
-            age: parseInt(userAge, 10)
-        })
-    });
-    if (response.ok === true) {
-        const user = await response.json();
-        reset();
-        document.querySelector("tbody").append(row(user));
-    }
-}
-*/
-
-
-async function CreateUser(userAge) {
-
-    const response = await fetch("users", {
-        method: "GET",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-            age: parseInt(userAge, 10)
-        })
-    });
-    if (response.ok === true) {
-        const user = await response.json();
-    }
-}
-
-//var sendButton = document.userForm.NewUser;
-//sendButton.addEventListener("click", CreateUser(123));
-
-
-
-function CreateUser1(userAge) {
-
-    console.log(userAge);
-}
-
-//var sendButton = document.userForm.NewUser1;
-//sendButton.addEventListener("click", CreateUser1(12345));
 
 function signinPre() {
     
@@ -68,14 +22,15 @@ async function signin(userName, userPassword) {
     // если запрос прошел нормально
     if (response.ok === true) {
         // получаем данные
-        const users = await response.json();
-        //let rows = document.querySelector("tbody"); 
-        console.log(users);
-        //users.forEach(user => {
-            // добавляем полученные элементы в таблицу
-            //rows.append(row(user));
-            //console.log(user);
-        //});
+        const user = await response.json();
+        //let rows = document.querySelector("tbody");
+        let TokenLabel = document.createElement('div');
+        console.log(user.token);
+        TokenLabel.innerHTML = user.token;
+        document.body.append(TokenLabel);
+
+        console.log(user);
+
     }
 }
 
@@ -96,18 +51,19 @@ async function signup(userName, userPassword) {
         const users = await response.json();
 
         console.log(users);
-        //users.forEach(user => {
-            // добавляем полученные элементы в таблицу
-            //rows.append(row(user));
-            //console.log(user);
-        //});
     }
 }
 
+function mePre() {
+    const form = document.forms["userForm"];
+    const token = form.elements["token"].value;
+    console.log(token);
+    MeUsers(token);
+}
 
-async function MeUsers() {
+async function MeUsers(token) {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/me", {
+    const response = await fetch("/me/" + token, {
         method: "GET",
         headers: { "Accept": "application/json" }
     });
@@ -117,11 +73,6 @@ async function MeUsers() {
         const users = await response.json();
         //let rows = document.querySelector("tbody"); 
         console.log(users);
-        //users.forEach(user => {
-            // добавляем полученные элементы в таблицу
-            //rows.append(row(user));
-            //console.log(user);
-        //});
     }
 }
 
@@ -138,11 +89,6 @@ async function GetUsers() {
         const users = await response.json();
         //let rows = document.querySelector("tbody"); 
         console.log(users);
-        //users.forEach(user => {
-            // добавляем полученные элементы в таблицу
-            //rows.append(row(user));
-            //console.log(user);
-        //});
     }
 }
 
@@ -150,9 +96,9 @@ GetUsers();
 
 
 // Получение пользователя
-async function GetUser(id) {
+async function GetUser(token) {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/users/" + id, {
+    const response = await fetch("/users/" + token, {
         method: "GET",
         headers: { "Accept": "application/json" }
     });
@@ -162,11 +108,6 @@ async function GetUser(id) {
         const user = await response.json();
         //let rows = document.querySelector("tbody"); 
         console.log(user);
-        //users.forEach(user => {
-            // добавляем полученные элементы в таблицу
-            //rows.append(row(user));
-            //console.log(user);
-        //});
     }
 }
 
