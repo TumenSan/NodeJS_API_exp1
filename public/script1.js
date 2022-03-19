@@ -1,3 +1,4 @@
+//const { cookie } = require("express/lib/response");
 
 function signinPre() {
     
@@ -26,8 +27,13 @@ async function signin(userName, userPassword) {
         //let rows = document.querySelector("tbody");
         let TokenLabel = document.createElement('div');
         console.log(user.token);
-        TokenLabel.innerHTML = user.token;
-        document.body.append(TokenLabel);
+        //document.cookie = "name=bearerToken; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+        //delete document.cookie['bearerToken'];
+        //document.cookie = user.token;
+        //alert(document.cookie);
+
+        localStorage.setItem('bearerToken', user.token);
+        //alert( localStorage.getItem('bearerToken') );
 
         console.log(user);
 
@@ -54,25 +60,25 @@ async function signup(userName, userPassword) {
     }
 }
 
-function mePre() {
-    const form = document.forms["userForm"];
-    const token = form.elements["token"].value;
-    console.log(token);
-    MeUsers(token);
-}
 
-async function MeUsers(token) {
+async function MeUsers() {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/me/" + token, {
+    const response = await fetch("/me/" + localStorage.getItem('bearerToken'), {
         method: "GET",
         headers: { "Accept": "application/json" }
     });
     // если запрос прошел нормально
     if (response.ok === true) {
         // получаем данные
-        const users = await response.json();
+        const user = await response.json();
         //let rows = document.querySelector("tbody"); 
-        console.log(users);
+
+        let loginLabel = document.createElement('div');
+
+        loginLabel.innerHTML = user.login;
+        document.body.append(loginLabel);
+
+        console.log(user);
     }
 }
 
@@ -92,8 +98,16 @@ async function GetUsers() {
     }
 }
 
+//!!!
 GetUsers();
 
+
+function GetUserPre() {
+    const form = document.forms["userForm"];
+    const token = form.elements["token"].value;
+    console.log(token);
+    GetUser(token);
+}
 
 // Получение пользователя
 async function GetUser(token) {

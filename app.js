@@ -2,6 +2,15 @@
 
 const express = require("express");
 const fs = require("fs");
+cookieParser = require('cookie-parser');
+const mongoose = require("mongoose");
+
+const db = 'mongodb+srv://TumenS:ilieskas56@cluster0.4cjhh.mongodb.net/node-api-exp-0?retryWrites=true&w=majority'
+
+mongoose
+    .connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then((res) => console.log('Connected to DB'))
+    .catch((error) => console.log(error));
 
 const app = express();
 const jsonParser = express.json();
