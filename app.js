@@ -39,13 +39,51 @@ app.use(express.static(__dirname + "/public"));
 
 const filePath = "bonus.json";
 
-app.post("/signup", function(req, res){
-       
+app.post("/signin", jsonParser, function(req, res){
+    if(!req.body) return res.sendStatus(400);
+      
+    const userLogin = req.body.name;
+    const userPassword = req.body.password;
+
+    const content = fs.readFileSync(filePath, "utf8");
+    const users = JSON.parse(content);
+    let user = null;
+    // находим в массиве пользователя по id
+    for(var i=0; i<users.length; i++){
+        if((users[i].login==userLogin) && (users[i].password==userPassword)){
+            user = users[i];
+            users[i].token = Math.random() * (1000000 - 10000) + 10000;
+            break;
+        }
+    }
+    // отправляем пользователя
+    if(user){
+        console.log(user);
+        res.send(user);
+        console.log(users);
+
+        data = JSON.stringify(users);
+        // перезаписываем файл с новыми данными
+        fs.writeFileSync("bonus.json", data);
+    }
+    else{
+        res.status(404).send();
+    }
+});
+
+app.post("/signup", jsonParser, function(req, res){
+    if(!req.body) return res.sendStatus(400);
+      
+    const userLogin = req.body.name;
+    const userPassword = req.body.password;
+    //const userLogin = 'asd';
+    //const userPassword = 'asdad';
+    
     const content = fs.readFileSync(filePath,"utf8");
     const users = JSON.parse(content);
-
-    const userAge = 555;
-    let user = {age: userAge};
+    
+    //console.log(document.forms["userForm"].elements["name"].value);
+    let user = {login: userLogin, password: userPassword};
 
     // находим максимальный id
     const id = Math.max.apply(Math,users.map(function(o){return o.id;}))
@@ -60,6 +98,13 @@ app.post("/signup", function(req, res){
     res.send(users);
 });
 
+app.get("/me", function(req, res){
+       
+    const content = fs.readFileSync(filePath,"utf8");
+    const users = JSON.parse(content);
+    res.send(users);
+});
+
 app.get("/users", function(req, res){
        
     const content = fs.readFileSync(filePath,"utf8");
@@ -67,7 +112,7 @@ app.get("/users", function(req, res){
     res.send(users);
 });
 
-app.get("/users/:id", jsonParser, function(req, res){
+app.get("/users/:id", function(req, res){
     const id = req.params.id; // получаем id
     const content = fs.readFileSync(filePath, "utf8");
     const users = JSON.parse(content);

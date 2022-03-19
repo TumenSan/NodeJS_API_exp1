@@ -45,13 +45,25 @@ function CreateUser1(userAge) {
 //var sendButton = document.userForm.NewUser1;
 //sendButton.addEventListener("click", CreateUser1(12345));
 
+function signinPre() {
+    
+    const form = document.forms["userForm"];
+    const name = form.elements["name"].value;
+    const password = form.elements["password"].value;
+    console.log(name);
+    console.log(password);
+    signin(name, password);
+}
 
-
-async function signup() {
+async function signin(userName, userPassword) {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/signup", {
+    const response = await fetch("/signin", {
         method: "POST",
-        headers: { "Accept": "application/json" }
+        headers: { "Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            name: userName,
+            password: userPassword
+        })
     });
     // если запрос прошел нормально
     if (response.ok === true) {
@@ -67,6 +79,51 @@ async function signup() {
     }
 }
 
+
+async function signup(userName, userPassword) {
+    // отправляет запрос и получаем ответ
+    const response = await fetch("/signup", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            name: userName,
+            password: userPassword
+        })
+    });
+    // если запрос прошел нормально
+    if (response.ok === true) {
+        // получаем данные
+        const users = await response.json();
+
+        console.log(users);
+        //users.forEach(user => {
+            // добавляем полученные элементы в таблицу
+            //rows.append(row(user));
+            //console.log(user);
+        //});
+    }
+}
+
+
+async function MeUsers() {
+    // отправляет запрос и получаем ответ
+    const response = await fetch("/me", {
+        method: "GET",
+        headers: { "Accept": "application/json" }
+    });
+    // если запрос прошел нормально
+    if (response.ok === true) {
+        // получаем данные
+        const users = await response.json();
+        //let rows = document.querySelector("tbody"); 
+        console.log(users);
+        //users.forEach(user => {
+            // добавляем полученные элементы в таблицу
+            //rows.append(row(user));
+            //console.log(user);
+        //});
+    }
+}
 
 // Получение всех пользователей
 async function GetUsers() {
@@ -114,49 +171,20 @@ async function GetUser(id) {
 }
 
 
+// отправка формы
+document.forms["userForm"].addEventListener("submit", e => {
+    e.preventDefault();
+    const form = document.forms["userForm"];
+    const name = form.elements["name"].value;
+    const password = form.elements["password"].value;
+    console.log(name);
+    console.log(password);
+    signup(name, password);
+    //reset();
+});
 
-function row(user) {
-
-    const tr = document.createElement("tr");
-    tr.setAttribute("data-rowid", user.id);
-
-    const idTd = document.createElement("td");
-    idTd.append(user.id);
-    tr.append(idTd);
-
-    const nameTd = document.createElement("td");
-    nameTd.append(user.name);
-    tr.append(nameTd);
-
-    const ageTd = document.createElement("td");
-    ageTd.append(user.age);
-    tr.append(ageTd);
-      
-    const linksTd = document.createElement("td");
-
-    const editLink = document.createElement("a");
-    editLink.setAttribute("data-id", user.id);
-    editLink.setAttribute("style", "cursor:pointer;padding:15px;");
-    editLink.append("Изменить");
-    editLink.addEventListener("click", e => {
-
-        e.preventDefault();
-        GetUser(user.id);
-    });
-    linksTd.append(editLink);
-
-    const removeLink = document.createElement("a");
-    removeLink.setAttribute("data-id", user.id);
-    removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
-    removeLink.append("Удалить");
-    removeLink.addEventListener("click", e => {
-
-        e.preventDefault();
-        DeleteUser(user.id);
-    });
-
-    linksTd.append(removeLink);
-    tr.appendChild(linksTd);
-
-    return tr;
+function reset(){
+    const form = document.forms["userForm"];
+    form.elements["name"].value = '';
+    form.elements["password"].value = '';
 }

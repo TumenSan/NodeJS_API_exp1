@@ -8,20 +8,20 @@
 </head>
 <body>
     <h2>Список пользователей</h2>
-    <form name="userForm">
-        <input type="hidden" name="id" value="0" />
+    <form id="userForm">
         <div class="form-group">
             <label for="name">Имя:</label>
             <input class="form-control" name="name" />
         </div>
         <div class="form-group">
-            <label for="age">Возраст:</label>
-            <input class="form-control" name="age" />
+            <label for="password">Пароль:</label>
+            <input class="form-control" name="password" />
         </div>
-        <div class="panel-body">
-            <input type="submit" name="NewUser" value="Сохранить" />
-        </div>
-        <input type="button" name="NewUser1" value="signup" onclick="signup()"/>
+
+
+        <input type="submit" name="NewUser" value="Сохранить" />
+
+        <input type="button" name="NewUser1" value="signup" onclick="signinPre()"/>
         <input type="button" name="NewUser1" value="GetUser1" onclick="GetUser(1)"/>
     </form>
     
