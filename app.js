@@ -5,7 +5,7 @@ const fs = require("fs");
 cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 
-const db = 'mongodb+srv://TumenS:<!>@cluster0.4cjhh.mongodb.net/node-api-exp-0?retryWrites=true&w=majority'
+const db = 'mongodb+srv://TumenS:ilieskas56@cluster0.4cjhh.mongodb.net/node-api-exp-0?retryWrites=true&w=majority'
 
 mongoose
     .connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
@@ -15,25 +15,7 @@ mongoose
 const app = express();
 //
 const Schema = mongoose.Schema;
-// установка схемы
-const userScheme = new Schema({
-    name: String,
-    age: Number
-});
 
-const User = mongoose.model("users2", userScheme);
-const user = new User({
-    name: "Bill",
-    age: 41
-});
-  
-user.save(function(err){
-    mongoose.disconnect();  // отключение от базы данных
-      
-    if(err) return console.log(err);
-    console.log("Сохранен объект", user);
-});
-//
 
 const jsonParser = express.json();
 
@@ -86,6 +68,31 @@ app.post("/signup", jsonParser, function(req, res){
     
     //console.log(document.forms["userForm"].elements["name"].value);
     let user = {login: userLogin, password: userPassword};
+
+
+    
+    // установка схемы
+    const userScheme = new Schema({
+        login: String,
+        password: String,
+        token: String
+    });
+
+    const User = mongoose.model("users", userScheme);
+    const userBase = new User({
+        login: userLogin,
+        password: userPassword
+    });
+    
+    userBase.save(function(err){
+        mongoose.disconnect();  // отключение от базы данных
+        
+        if(err) return console.log(err);
+        console.log("Сохранен объект", user);
+    });
+    //
+
+
 
     // находим максимальный id
     const id = Math.max.apply(Math,users.map(function(o){return o.id;}))
