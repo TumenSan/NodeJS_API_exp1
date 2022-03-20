@@ -23,6 +23,8 @@ app.use(express.static(__dirname + "/public"));
 
 const filePath = "bonus.json";
 
+
+
 app.post("/signin", jsonParser, function(req, res){
     if(!req.body) return res.sendStatus(400);
       
@@ -32,6 +34,8 @@ app.post("/signin", jsonParser, function(req, res){
     const content = fs.readFileSync(filePath, "utf8");
     const users = JSON.parse(content);
     let user = null;
+
+
     // находим в массиве пользователя по id
     for(var i=0; i<users.length; i++){
         if((users[i].login==userLogin) && (users[i].password==userPassword)){
@@ -40,6 +44,30 @@ app.post("/signin", jsonParser, function(req, res){
             break;
         }
     }
+
+
+    // установка схемы
+    const userScheme = new Schema({
+        login: String,
+        password: String,
+        token: String
+    });
+
+    const User = mongoose.model("users", userScheme);
+    
+    User.updateOne({login: userLogin, password: userPassword}, 
+        {login: userLogin, password: userPassword, token: users[i].token}, function(err, docs){
+        docs.token = users[i].token; //бред
+        mongoose.disconnect();
+         
+        if(err) return console.log(err);
+         
+        console.log(docs);
+    });
+    //
+
+
+    
     // отправляем пользователя
     if(user){
         console.log(user);
@@ -54,6 +82,8 @@ app.post("/signin", jsonParser, function(req, res){
         res.status(404).send();
     }
 });
+
+
 
 app.post("/signup", jsonParser, function(req, res){
     if(!req.body) return res.sendStatus(400);
@@ -81,7 +111,8 @@ app.post("/signup", jsonParser, function(req, res){
     const User = mongoose.model("users", userScheme);
     const userBase = new User({
         login: userLogin,
-        password: userPassword
+        password: userPassword,
+        token: ""
     });
     
     userBase.save(function(err){
