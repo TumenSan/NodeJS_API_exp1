@@ -13,6 +13,28 @@ mongoose
     .catch((error) => console.log(error));
 
 const app = express();
+//
+const Schema = mongoose.Schema;
+// установка схемы
+const userScheme = new Schema({
+    name: String,
+    age: Number
+});
+
+const User = mongoose.model("users2", userScheme);
+const user = new User({
+    name: "Bill",
+    age: 41
+});
+  
+user.save(function(err){
+    mongoose.disconnect();  // отключение от базы данных
+      
+    if(err) return console.log(err);
+    console.log("Сохранен объект", user);
+});
+//
+
 const jsonParser = express.json();
 
 app.use(express.static(__dirname + "/public"));
