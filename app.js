@@ -5,7 +5,7 @@ const fs = require("fs");
 cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 
-const db = 'mongodb+srv://TumenS:ilieskas56@cluster0.4cjhh.mongodb.net/node-api-exp-0?retryWrites=true&w=majority'
+const db = 'mongodb+srv://TumenS:<!>@cluster0.4cjhh.mongodb.net/node-api-exp-0?retryWrites=true&w=majority'
 
 mongoose
     .connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
