@@ -19,6 +19,16 @@ const app = express();
 const Schema = mongoose.Schema;
 
 
+// установка схемы
+const userScheme = new Schema({
+    login: String,
+    password: String,
+    token: String
+});
+
+const User = mongoose.model("users", userScheme);
+
+
 const jsonParser = express.json();
 
 app.use(express.static(__dirname + "/public"));
@@ -48,19 +58,11 @@ app.post("/signin", jsonParser, function(req, res){
     }
 
 
-    // установка схемы
-    const userScheme = new Schema({
-        login: String,
-        password: String,
-        token: String
-    });
-
-    const User = mongoose.model("users", userScheme);
     
     User.updateOne({login: userLogin, password: userPassword}, 
         {login: userLogin, password: userPassword, token: users[i].token}, function(err, docs){
         docs.token = users[i].token; //бред
-        mongoose.disconnect();
+        //mongoose.disconnect();
          
         if(err) return console.log(err);
          
@@ -102,15 +104,6 @@ app.post("/signup", jsonParser, function(req, res){
     let user = {login: userLogin, password: userPassword};
 
 
-    
-    // установка схемы
-    const userScheme = new Schema({
-        login: String,
-        password: String,
-        token: String
-    });
-
-    const User = mongoose.model("users", userScheme);
     const userBase = new User({
         login: userLogin,
         password: userPassword,
@@ -118,7 +111,7 @@ app.post("/signup", jsonParser, function(req, res){
     });
     
     userBase.save(function(err){
-        mongoose.disconnect();  // отключение от базы данных
+        //mongoose.disconnect();  // отключение от базы данных
         
         if(err) return console.log(err);
         console.log("Сохранен объект", user);
