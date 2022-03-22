@@ -43,48 +43,30 @@ app.post("/signin", jsonParser, function(req, res){
     const userLogin = req.body.name;
     const userPassword = req.body.password;
 
-    const content = fs.readFileSync(filePath, "utf8");
-    const users = JSON.parse(content);
     let user = null;
 
-
-    // находим в массиве пользователя по id
-    for(var i=0; i<users.length; i++){
-        if((users[i].login==userLogin) && (users[i].password==userPassword)){
-            user = users[i];
-            users[i].token = Math.random() * (1000000 - 10000) + 10000;
-            break;
-        }
-    }
-
+    newToken = Math.random() * (1000000 - 10000) + 10000;
 
     
     User.updateOne({login: userLogin, password: userPassword}, 
-        {login: userLogin, password: userPassword, token: users[i].token}, function(err, docs){
-        docs.token = users[i].token; //бред
+        {login: userLogin, password: userPassword, token: newToken}, function(err, docs){
+        //docs.token = newToken;
         //mongoose.disconnect();
          
         if(err) return console.log(err);
          
-        console.log(docs);
+        user = {login: userLogin, password: userPassword, token: newToken};
+
+        // отправляем пользователя
+        if(user){
+            console.log(user);
+            res.send(user);
+        }
+        else{
+            res.status(404).send();
+        }
     });
-    //
-
-
     
-    // отправляем пользователя
-    if(user){
-        console.log(user);
-        res.send(user);
-        console.log(users);
-
-        data = JSON.stringify(users);
-        // перезаписываем файл с новыми данными
-        fs.writeFileSync("bonus.json", data);
-    }
-    else{
-        res.status(404).send();
-    }
 });
 
 
@@ -94,13 +76,7 @@ app.post("/signup", jsonParser, function(req, res){
       
     const userLogin = req.body.name;
     const userPassword = req.body.password;
-    //const userLogin = 'asd';
-    //const userPassword = 'asdad';
-    
-    const content = fs.readFileSync(filePath,"utf8");
-    const users = JSON.parse(content);
-    
-    //console.log(document.forms["userForm"].elements["name"].value);
+
     let user = {login: userLogin, password: userPassword};
 
 
@@ -119,67 +95,83 @@ app.post("/signup", jsonParser, function(req, res){
     //
 
 
-
-    // находим максимальный id
-    const id = Math.max.apply(Math,users.map(function(o){return o.id;}))
-    // увеличиваем его на единицу
-    user.id = id+1;
-    // добавляем пользователя в массив
-    users.push(user);
-    data = JSON.stringify(users);
-    // перезаписываем файл с новыми данными
-    fs.writeFileSync("bonus.json", data);
-
-    res.send(users);
+    res.send(user);
 });
 
 app.get("/me/:token", function(req, res){
     const token = req.params.token; // получаем id
-    const content = fs.readFileSync(filePath, "utf8");
-    const users = JSON.parse(content);
+
     let user = null;
-    // находим в массиве пользователя по id
-    for(var i=0; i<users.length; i++){
-        if(users[i].token==token){
-            user = users[i];
-            break;
+
+
+    User.findOne({token: token}, function(err, doc){
+        //mongoose.disconnect();
+         
+        if(err) return console.log(err);
+         
+        user = doc;
+        console.log(doc);
+        console.log(doc.login);
+
+
+        // отправляем пользователя
+        if(user){
+            res.send(user);
         }
-    }
-    // отправляем пользователя
-    if(user){
-        res.send(user);
-    }
-    else{
-        res.status(404).send();
-    }
+        else{
+            res.status(404).send();
+        }
+    });
+
 });
 
 app.get("/users", function(req, res){
        
-    const content = fs.readFileSync(filePath,"utf8");
-    const users = JSON.parse(content);
-    res.send(users);
+    let user = null;
+    
+    User.find({}, function(err, doc){
+        //mongoose.disconnect();
+         
+        if(err) return console.log(err);
+         
+        user = doc;
+        //console.log(user);
+        console.log(doc.login);
+
+        // отправляем пользователя
+        if(user){
+            res.send(user);
+        }
+        else{
+            res.status(404).send();
+        }
+    });
+    
 });
 
 app.get("/users/:token", function(req, res){
     const token = req.params.token; // получаем id
-    const content = fs.readFileSync(filePath, "utf8");
-    const users = JSON.parse(content);
+
     let user = null;
-    // находим в массиве пользователя по id
-    for(var i=0; i<users.length; i++){
-        if(users[i].token==token){
-            user = users[i];
-            break;
+    
+    User.findOne({token: token}, function(err, doc){
+        //mongoose.disconnect();
+         
+        if(err) return console.log(err);
+         
+        user = doc;
+        console.log(doc);
+        console.log(doc.login);
+
+        // отправляем пользователя
+        if(user){
+            res.send(user);
         }
-    }
-    // отправляем пользователя
-    if(user){
-        res.send(user);
-    }
-    else{
-        res.status(404).send();
-    }
+        else{
+            res.status(404).send();
+        }
+    });
+    
 });
 
 app.listen(process.env.PORT, function(){

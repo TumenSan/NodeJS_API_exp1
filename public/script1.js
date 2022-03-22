@@ -93,13 +93,13 @@ async function GetUsers() {
     if (response.ok === true) {
         // получаем данные
         const users = await response.json();
-        //let rows = document.querySelector("tbody"); 
+
         console.log(users);
     }
 }
 
 //!!!
-GetUsers();
+//GetUsers();
 
 
 function GetUserPre() {
