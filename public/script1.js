@@ -58,8 +58,40 @@ async function signup(userName, userPassword) {
 
         console.log(users);
     }
-}
+    // если запрос прошел неправильно
+    else {
 
+        console.log('Error signup');
+    }
+}
+//!!!!!
+function Get1UserPre() {
+    const form = document.forms["userForm"];
+    const name = form.elements["name"].value;
+    const password = form.elements["password"].value;
+    console.log(name);
+    console.log(password);
+    Get1User(name, password);
+}
+// Получение пользователя
+async function Get1User(userName, userPassword) {
+    const response = await fetch("/useri", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            name: userName,
+            password: userPassword
+        })
+    });
+    // если запрос прошел нормально
+    if (response.ok === true) {
+        // получаем данные
+        const users = await response.json();
+
+        console.log(users);
+    }
+}
+//
 
 async function MeUsers() {
     // отправляет запрос и получаем ответ
@@ -122,6 +154,9 @@ async function GetUser(token) {
         const user = await response.json();
         //let rows = document.querySelector("tbody"); 
         console.log(user);
+    } else {
+        //const user = await response.json();
+        console.log('error1');
     }
 }
 
