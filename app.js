@@ -1,3 +1,4 @@
+const signin = require( './UserReq/signin' );
 
 const express = require("express");
 const fs = require("fs");
@@ -5,6 +6,8 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 
 const asyncHandler = require('express-async-handler'); //
+
+const { check, validationResult } = require('express-validator'); //
 
 const db = ''
 
@@ -45,97 +48,20 @@ const jsonParser = express.json();
 
 app.use(express.static(__dirname + "/public"));
 
-const filePath = "bonus.json";
-
 
 app.post("/signin", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
-      
-    const userLogin = req.body.name;
-    const userPassword = req.body.password;
+    try{
+        const userToken = await signin(User);
+        // отправляем пользователя
 
-    //let user = null;
-
-    newToken = Math.random() * (1000000 - 10000) + 10000;
-
-
-    //
-    try {
-      const user = await User.find({$and : [{login: userLogin}, {password: userPassword}]});
-
-      if (isEmpty(user)){
-        console.log(987);
-          return res.status(404).send();
-      } else {
-        try{
-          const userNew = await User.updateOne({login: userLogin, password: userPassword}, 
-            {login: userLogin, password: userPassword, token: newToken});
-            
-          // отправляем пользователя
-          console.log('userNew');
-          userToken = {token: newToken};
-            console.log(userToken);
-            res.send(userToken);
-        }
-        catch {
-           res.status(404).send();
-        } 
-      }
-          
-  }catch(err) {
-      
-
-      console.log(err);
-      res.status(404).send();
-  }
+        res.send(userToken);
+    }
+    catch {
+        res.status(404).send();
+    }
 });
 
-
-//
-app.put('/testing', asyncHandler(async (req, res) => {
-    const { email } = req.body
-    const user = await User.findOne({ email })
-  
-    // Если пользователь не найден - выбросим ошибку
-    if (!user) throw createError(400, `User '${email}' not found`)
-  }))
-app.post('/testing', asyncHandler(async (req, res, next) => {
-    // Сделать что-нибудь
-  })) //
-
-  app.get('/a_route_behind_paywall', function checkIfPaidSubscriber(req, res, next) {
-      if (!req.user.hasPaid) {
-        // continue handling this request
-        next('route')
-      }
-    },
-    function getPaidContent(req, res, next) {
-      PaidContent.find(function (err, doc) {
-        if (err) return next(err)
-        res.json(doc)
-      })
-    }
-  )
-
-
-  function loadUser(req, res, next) {
-    if (req.session.user_id) {
-      User.findById(req.session.user_id, function(user) {
-        if (user) {
-          req.currentUser = user;
-          next();
-        } else {
-          res.redirect('/sessions/new');
-        }
-      });
-    } else {
-      res.redirect('/sessions/new');
-    }
-  }
-  
-  app.get('/documents.:format?', loadUser, function(req, res) {
-    // ...
-  });
 
 app.post("/signup", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
@@ -185,53 +111,6 @@ app.post('/user/:id', jsonParser, function (req, res, next) {
   */
 
   //!!!!!!!
-var requestTime = function (req, res, next) {
-    //req.requestTime = Date.now();
-    req.requestTime = 199999991;
-    next();
-  };
-  
-  app.use(requestTime);
-  
-  app.get('/useri', function (req, res) {
-    var responseText = 'Hello World!';
-    responseText += 'Requested at: ' + req.requestTime + '';
-    res.send(responseText);
-  });
-  
-
-function next(){
-    console.log(987);
-}
-
-app.post('/useri', jsonParser, function (req, res, next) {
-    if(!req.body) return res.sendStatus(400);
-      
-    const userLogin = req.body.name;
-    const userPassword = req.body.password;
-
-    let user = {login: userLogin, password: userPassword};
-
-
-    const userBase = new User({
-        login: userLogin,
-        password: userPassword,
-        token: ""
-    });
-    
-    userBase.save(function(err){
-        //mongoose.disconnect();  // отключение от базы данных
-        
-        if(err) return console.log(err);
-        console.log("Сохранен объект", user);
-    });
-    //
-
-    next();
-    }, function (req, res, next) {
-    res.send('User Info');
-  });
-//!!!!!!!!!!!!!!!!!!!!
 
 
 app.get("/me/:token", function(req, res){
