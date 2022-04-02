@@ -52,12 +52,14 @@ app.use(express.static(__dirname + "/public"));
 app.post("/signin", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
     try{
-        const userToken = await signin(User);
+        console.log('work');
+        const userToken = await signin(req, User);
         // отправляем пользователя
 
         res.send(userToken);
     }
-    catch {
+    catch(error) {
+        console.log('no work', error);
         res.status(404).send();
     }
 });

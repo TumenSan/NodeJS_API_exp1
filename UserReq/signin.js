@@ -1,8 +1,8 @@
 
 
 
-async function signin(userDB){
-    if(!req.body) return res.sendStatus(400);
+async function signin(req, userDB){
+    //if(!req.body) return res.sendStatus(400);
       
     const userLogin = req.body.name;
     const userPassword = req.body.password;
@@ -31,21 +31,32 @@ async function signin(userDB){
           console.log('userNew');
           userToken = {token: newToken};
             console.log(userToken);
+            console.log('userToken111');
 
             return userToken;
         }
-        catch {
+        catch(err) {
            //res.status(404).send();
-           console.log('ErrorUser2');
+           console.log('ErrorUser2', err);
            throw new Error(404);
         } 
       }
           
   }catch(err) {
-      console.log('ErrorUser3');
+      console.log('ErrorUser3', err);
       throw new Error(404);
   }
 }
+
+
+function isEmpty(obj) {
+    for (let key in obj) {
+      // если тело цикла начнет выполняться - значит в объекте есть свойства
+      return false;
+    }
+    return true;
+  }
+
 
 module.exports = signin;
 //export { signin };
