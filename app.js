@@ -41,8 +41,14 @@ const userScheme = new Schema({
     token: String
 });
 
-const User = mongoose.model("users", userScheme);
+const bookScheme = new Schema({
+    login: String,
+    password: String,
+    token: String
+});
 
+const User = mongoose.model("users", userScheme);
+const Book = mongoose.model("books", userScheme);
 
 const jsonParser = express.json();
 
@@ -64,6 +70,47 @@ app.post("/signin", jsonParser, async function(req, res, next){
     }
 });
 
+app.delete("/user_delete", jsonParser, async function(req, res, next){
+    if(!req.body) return res.sendStatus(400);
+    try{
+        console.log('work');
+
+        const token = req.params.token;
+
+        User.deleteOne({token: token});
+
+        res.send(token);
+    }
+    catch(error) {
+        console.log('no work', error);
+        res.status(404).send();
+    }
+});
+
+app.put("/user_put", jsonParser, async function(req, res, next){
+    if(!req.body) return res.sendStatus(400);
+    try{
+        console.log('work');
+
+        const token = req.params.token;
+
+        User.findByIdAndUpdate({token},{"name": "David"}, function(err, result) {
+            if (err) {
+                console.log('Error updating user: ' + err);
+                res.send({'error':'An error has occurred'});
+            } else {
+                console.log('' + result + ' document(s) updated');
+                res.send(user);
+            }
+        });
+
+        res.send(token);
+    }
+    catch(error) {
+        console.log('no work', error);
+        res.status(404).send();
+    }
+});
 
 app.post("/signup", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
@@ -186,6 +233,59 @@ app.get("/users/:token", function(req, res){
     
 });
 
+app.get("/books/get", function(req, res){
+    const book = req.params.book; // получаем id
+    
+    Book.find({}, function(err, doc){
+        //mongoose.disconnect();
+         
+        if(err) return console.log(err);
+         
+        book = doc;
+
+        console.log(doc.login);
+
+        if(book){
+            res.send(book);
+        }
+        else{
+            res.status(404).send();
+        }
+    });
+    
+});
+
+app.post("/books/post", jsonParser, async function(req, res, next){
+    if(!req.body) return res.sendStatus(400);
+      
+    const book = req.body.book;
+    const author = req.body.author;
+
+    try {
+        const book = await Book.find({$or : [{book: book}, {author: author}]});
+
+        if (!(isEmpty(book))){
+            return res.status(404).send();
+        } else {
+            const bookBase = new User({
+                book: book,
+                author: author,
+                token: ""
+            });
+
+            await bookBase.save();
+            console.log(book);
+            res.send(book);
+        }
+            
+    }catch(err) {
+        
+
+        console.log(err);
+        res.status(404).send();
+    }
+
+});
 
 
 function isEmpty(obj) {
