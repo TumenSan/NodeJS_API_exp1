@@ -1,5 +1,8 @@
 
-
+class MyError extends Error {constructor (error) {
+    super();
+    this.error = 404;
+}}
 
 async function signin(req, userDB){
     //if(!req.body) return res.sendStatus(400);
