@@ -95,9 +95,12 @@ async function Get1User(userName, userPassword) {
 
 async function MeUsers() {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/me/" + localStorage.getItem('bearerToken'), {
-        method: "GET",
-        headers: { "Accept": "application/json" }
+    const response = await fetch("/me", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            token: localStorage.getItem('bearerToken')
+        })
     });
     // если запрос прошел нормально
     if (response.ok === true) {
@@ -144,9 +147,12 @@ function GetUserPre() {
 // Получение пользователя
 async function GetUser(token) {
     // отправляет запрос и получаем ответ
-    const response = await fetch("/users/" + token, {
-        method: "GET",
-        headers: { "Accept": "application/json" }
+    const response = await fetch("/users", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            token: token
+        })
     });
     // если запрос прошел нормально
     if (response.ok === true) {
