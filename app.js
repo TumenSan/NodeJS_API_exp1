@@ -20,8 +20,6 @@ mongoose
     .then((res) => console.log('Connected to DB'))
     .catch((error) => console.log(error));
 
-    
-
 
 const app = express();
 
@@ -30,7 +28,6 @@ const app = express();
 //app.use("/auth", authRouter)
 //
 
-//
 const Schema = mongoose.Schema;
 
 
@@ -149,19 +146,6 @@ app.post("/signup", jsonParser, async function(req, res, next){
 });
 
 
-//!!!!!!!!!!
-/*
-app.post('/user/:id', jsonParser, function (req, res, next) {
-    console.log('ID:', req.params.id);
-    next();
-  }, function (req, res, next) {
-    res.send('User Info');
-  });
-  */
-
-  //!!!!!!!
-
-
 app.post("/me", function(req, res){
     if(!req.body) return res.sendStatus(400);
 
@@ -211,9 +195,11 @@ app.get("/users", function(req, res){
     
 });
 
-app.get("/users/:token", function(req, res){
-    const token = req.params.token; // получаем id
+app.post("/users", function(req, res){
+    if(!req.body) return res.sendStatus(400);
 
+    const token = req.body.token; // получаем id
+    
     let user = null;
     
     User.findOne({token: token}, function(err, doc){
@@ -280,8 +266,7 @@ app.post("/books", jsonParser, async function(req, res, next){
             res.send(book);
         }
             
-    }catch(err) {
-        
+    }catch(err) {    
 
         console.log(err);
         res.status(404).send();
