@@ -70,7 +70,7 @@ app.post("/signin", jsonParser, async function(req, res, next){
     }
 });
 
-app.delete("/user_delete", jsonParser, async function(req, res, next){
+app.delete("/user", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
     try{
         console.log('work');
@@ -83,11 +83,11 @@ app.delete("/user_delete", jsonParser, async function(req, res, next){
     }
     catch(error) {
         console.log('no work', error);
-        res.status(404).send();
+        res.status(500).send();
     }
 });
 
-app.put("/user_put", jsonParser, async function(req, res, next){
+app.put("/user", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
     try{
         console.log('work');
@@ -108,7 +108,7 @@ app.put("/user_put", jsonParser, async function(req, res, next){
     }
     catch(error) {
         console.log('no work', error);
-        res.status(404).send();
+        res.status(500).send();
     }
 });
 
@@ -162,8 +162,10 @@ app.post('/user/:id', jsonParser, function (req, res, next) {
   //!!!!!!!
 
 
-app.get("/me/:token", function(req, res){
-    const token = req.params.token; // получаем id
+app.post("/me", function(req, res){
+    if(!req.body) return res.sendStatus(400);
+
+    const token = req.body.token; // получаем id
 
     let user = null;
 
@@ -233,7 +235,7 @@ app.get("/users/:token", function(req, res){
     
 });
 
-app.get("/books/get", function(req, res){
+app.get("/books", function(req, res){
     const book = req.params.book; // получаем id
     
     Book.find({}, function(err, doc){
@@ -255,7 +257,7 @@ app.get("/books/get", function(req, res){
     
 });
 
-app.post("/books/post", jsonParser, async function(req, res, next){
+app.post("/books", jsonParser, async function(req, res, next){
     if(!req.body) return res.sendStatus(400);
       
     const book = req.body.book;
